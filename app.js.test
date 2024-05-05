@@ -4,27 +4,20 @@ import data from "./assets/restrykcje.json"; // zaimportuj dane z pliku JSON
 function App() {
 	const [postcode, setPostcode] = useState("");
 	const [options, setOptions] = useState([]);
-	const [error, setError] = useState("");
 
 	const handleForm = (e) => {
 		e.preventDefault();
 
-		// Sprawdź, czy wprowadzony kod pocztowy ma właściwy format (5 cyfr)
-		const isValidPostcode = /^\d{5}$/.test(postcode);
+		// Użyj wyrażenia regularnego, aby znaleźć kod pocztowy w tekście wprowadzonym przez użytkownika
+		const extractedPostcode = postcode.match(/\d{5}/);
 
-		if (isValidPostcode) {
-			const filteredOptions = data.filter((item) => item.Postcode === postcode);
-
-			if (filteredOptions.length > 0) {
-				setOptions(filteredOptions);
-				setError(""); // Wyczyść błąd, jeśli kod pocztowy jest poprawny
-			} else {
-				setOptions([]); // Wyczyść wyniki, jeśli nie znaleziono pasujących wyników
-				setError("Brak pasujących wyników dla wprowadzonego kodu pocztowego.");
-			}
+		if (extractedPostcode) {
+			const filteredOptions = data.filter(
+				(item) => item.Postcode === extractedPostcode[0]
+			);
+			setOptions(filteredOptions);
 		} else {
-			setOptions([]); // Wyczyść wyniki, jeśli kod pocztowy jest nieprawidłowy
-			setError("Wprowadź poprawny kod pocztowy (5 cyfr).");
+			setOptions([]); // Jeśli kod pocztowy nie został znaleziony, wyczyść wyniki
 		}
 	};
 
@@ -36,7 +29,8 @@ function App() {
 					className="flex flex-col md:flex-row justify-evenly md:items-center w-full gap-2 items-stretch text-center">
 					<h1 className="font-bold uppercase">kod pocztowy / kod kierunkowy</h1>
 					<input
-						className="text-black p-2 font-bold text-center"
+						className="text-black p-2 text-center font-bold w-auto
+						"
 						type="text" // Zmiana typu wejściowego na tekst
 						value={postcode}
 						onChange={(e) => setPostcode(e.target.value)}
@@ -47,18 +41,16 @@ function App() {
 				</form>
 			</nav>
 
-			{error && <div className="text-red-500 text-center mt-4">{error}</div>}
-
-			<div className="flex justify-center items-center mt-4">
-				<ul className="flex flex-wrap gap-2">
+			<div className="flex justify-center px-5 items-center mt-8">
+				<ul className="flex gap-2  flex-wrap w-full ">
 					{options.map((option, index) => (
 						<li
 							key={index}
-							className={`border p-4 ${
+							className={`border p-2 ${
 								option.Trasa === "KRX1" ? "redDHL" : "yellowDHL text-black"
 							} text-center rounded-lg font-bold flex-grow`}>
-							<p>{option.City}</p>
-							<p> {option.Trasa}</p>
+							<p> {option.City}</p>
+							<p>{option.Trasa}</p>
 							<p>OF: {option.OF}</p>
 						</li>
 					))}
