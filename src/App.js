@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import data from "./assets/restrykcje.json"; // zaimportuj dane z pliku JSON
+import React, { useState, useRef } from "react";
+import data from "./assets/restrykcje.json";
 
 function App() {
 	const [postcode, setPostcode] = useState("");
 	const [options, setOptions] = useState([]);
 	const [error, setError] = useState("");
+	const inputRef = useRef(null);
 
 	const handleForm = (e) => {
 		e.preventDefault();
-
-		// Sprawdź, czy wprowadzony kod pocztowy ma właściwy format (5 cyfr)
 		const isValidPostcode = /^\d{5}$/.test(postcode);
 
 		if (isValidPostcode) {
@@ -17,27 +16,43 @@ function App() {
 
 			if (filteredOptions.length > 0) {
 				setOptions(filteredOptions);
-				setError(""); // Wyczyść błąd, jeśli kod pocztowy jest poprawny
+				setError("");
 			} else {
-				setOptions([]); // Wyczyść wyniki, jeśli nie znaleziono pasujących wyników
+				setOptions([]);
 				setError("Brak pasujących wyników dla wprowadzonego kodu pocztowego.");
 			}
 		} else {
-			setOptions([]); // Wyczyść wyniki, jeśli kod pocztowy jest nieprawidłowy
+			setOptions([]);
 			setError("Wprowadź poprawny kod pocztowy (5 cyfr).");
 		}
+
+		// Po zatwierdzeniu formularza ustawiamy focus na polu input
+		inputRef.current.focus();
+		// Zaznaczamy zawartość pola input
+		inputRef.current.select();
+	};
+
+	// Funkcja wywoływana po kliknięciu na obszar poza polem input
+	const handleClickOutside = () => {
+		// Ustawiamy focus na polu input
+		inputRef.current.focus();
+		// Zaznaczamy zawartość pola input
+		inputRef.current.select();
 	};
 
 	return (
-		<div className="min-h-screen bg-white">
+		<div
+			className="min-h-screen bg-white"
+			onClick={handleClickOutside}>
 			<nav className="sticky yellowDHL py-10 w-full">
 				<form
 					onSubmit={handleForm}
 					className="flex flex-col md:flex-row justify-evenly md:items-center w-full gap-2 items-stretch text-center">
 					<h1 className="font-bold uppercase">kod pocztowy / kod kierunkowy</h1>
 					<input
+						ref={inputRef}
 						className="text-black p-2 font-bold text-center"
-						type="text" // Zmiana typu wejściowego na tekst
+						type="text"
 						value={postcode}
 						onChange={(e) => setPostcode(e.target.value)}
 					/>
