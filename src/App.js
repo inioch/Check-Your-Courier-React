@@ -6,13 +6,22 @@ function App() {
 	const [options, setOptions] = useState([]);
 	const [error, setError] = useState("");
 	const inputRef = useRef(null);
-
 	const handleForm = (e) => {
 		e.preventDefault();
-		const isValidPostcode = /^\d{1,}[a-zA-Z]{0,}\d{0,}$/.test(postcode);
+		const isValidPostcode = /^\d{5}$/.test(postcode);
+		const isValidDirectionalCode = /^2lpl\d{5}\+\d+$/.test(postcode);
 
-		if (isValidPostcode) {
-			const filteredOptions = data.filter((item) => item.Postcode === postcode);
+		if (isValidPostcode || isValidDirectionalCode) {
+			let postalCode;
+			if (isValidPostcode) {
+				postalCode = postcode;
+			} else if (isValidDirectionalCode) {
+				postalCode = parseDirectionalCode(postcode);
+			}
+
+			const filteredOptions = data.filter(
+				(item) => item.Postcode === postalCode
+			);
 
 			if (filteredOptions.length > 0) {
 				setOptions(filteredOptions);
@@ -23,13 +32,17 @@ function App() {
 			}
 		} else {
 			setOptions([]);
-			setError("Wprowadź poprawny kod pocztowy (5 cyfr).");
+			setError("Wprowadź poprawny kod pocztowy (5 cyfr) lub kod kierunkowy.");
 		}
 
 		// Po zatwierdzeniu formularza ustawiamy focus na polu input
 		inputRef.current.focus();
 		// Zaznaczamy zawartość pola input
 		inputRef.current.select();
+	};
+
+	const parseDirectionalCode = (directionalCode) => {
+		return directionalCode.match(/\d{5}/)[0]; // Wyodrębniamy kod pocztowy z kodu kierunkowego
 	};
 
 	// Funkcja obsługująca kliknięcie poza polem input
