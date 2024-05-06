@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import data from "./assets/restrykcje.json";
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
 
 	const handleForm = (e) => {
 		e.preventDefault();
-		const isValidPostcode = /^\d{5}$/.test(postcode);
+		const isValidPostcode = /^\d{1,}[a-zA-Z]{0,}\d{0,}$/.test(postcode);
 
 		if (isValidPostcode) {
 			const filteredOptions = data.filter((item) => item.Postcode === postcode);
@@ -32,18 +32,28 @@ function App() {
 		inputRef.current.select();
 	};
 
-	// Funkcja wywoływana po kliknięciu na obszar poza polem input
-	const handleClickOutside = () => {
-		// Ustawiamy focus na polu input
-		inputRef.current.focus();
-		// Zaznaczamy zawartość pola input
-		inputRef.current.select();
+	// Funkcja obsługująca kliknięcie poza polem input
+	const handleClickOutside = (event) => {
+		if (inputRef.current && !inputRef.current.contains(event.target)) {
+			// Ustawiamy focus na polu input
+			inputRef.current.focus();
+			// Zaznaczamy zawartość pola input
+			inputRef.current.select();
+		}
 	};
 
+	useEffect(() => {
+		// Dodajemy event listener do elementu body
+		document.body.addEventListener("click", handleClickOutside);
+
+		// Return funkcji usuwającej event listenera
+		return () => {
+			document.body.removeEventListener("click", handleClickOutside);
+		};
+	}, []); // Pusta tablica dependencies oznacza, że useEffect zostanie wykonany tylko raz po zamontowaniu komponentu
+
 	return (
-		<div
-			className="min-h-screen bg-white"
-			onClick={handleClickOutside}>
+		<div className="min-h-screen bg-white">
 			<nav className="sticky yellowDHL py-10 w-full">
 				<form
 					onSubmit={handleForm}
