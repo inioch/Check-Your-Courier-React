@@ -9,7 +9,7 @@ function App() {
 	const handleForm = (e) => {
 		e.preventDefault();
 		const isValidPostcode = /^\d{5}$/.test(postcode);
-		const isValidDirectionalCode = /^2lpl\d{5}\+\d+$/.test(postcode);
+		const isValidDirectionalCode = /^2LPL\d{5}\+\d+$/.test(postcode);
 
 		if (isValidPostcode || isValidDirectionalCode) {
 			let postalCode;
