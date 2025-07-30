@@ -11,6 +11,11 @@ function App() {
 		const isValidPostcode = /^\d{5}$/.test(postcode);
 		const isValidDirectionalCode = /^2LPL\d{5}\+\d+$/.test(postcode);
 
+		// dodać zeby capslock nie blokował wyszukiwania
+		//const normalizedPostcode = postcode.toUpperCase();
+
+		//const isValidDirectionalCode = /^2LPL\d{5}\+\d+$/.test(normalizedPostcode);
+
 		if (isValidPostcode || isValidDirectionalCode) {
 			let postalCode;
 			if (isValidPostcode) {
@@ -93,7 +98,7 @@ function App() {
 						<li
 							key={index}
 							className={`border p-4 ${
-								option.Trasa === "KRX1" ? "redDHL" : "yellowDHL text-black"
+								option.Trasa === "KRX0" ? "redDHL" : "yellowDHL text-black"
 							} text-center rounded-lg font-bold flex-grow`}>
 							<p>{option.City}</p>
 							<p> {option.Trasa}</p>
