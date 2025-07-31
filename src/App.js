@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import data from "./assets/restrykcje.json";
 
 function App() {
@@ -31,6 +31,9 @@ function App() {
 			if (filteredOptions.length > 0) {
 				setOptions(filteredOptions);
 				setError("");
+				console.log(data);
+				console.log(filteredOptions);
+				console.log(postalCode);
 			} else {
 				setOptions([]);
 				setError("Brak pasujących wyników dla wprowadzonego kodu pocztowego.");
